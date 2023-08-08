@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  app:
+    image: node:16.14.0
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: bash -c "yarn && yarn start:dev"
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+volumes:
+  mongo-data:
