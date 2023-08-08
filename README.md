@@ -2,13 +2,19 @@
 
 ## Getting Started
 
+Application works in way you can add new wallet to the databae over the API and after that every transaction for that wallet will be savad in database.
+You can check wallet transactions, by accessing api endpoint(for example for wallet rPepJMwHU1meraWtY8rSCmkZNE78wGFgN4, use http://localhost:3000/wallets/address/rPepJMwHU1meraWtY8rSCmkZNE78wGFgN4). 
+\
+\
+The easiest way to test simple and see how app works is to check the code of e2e tests and run them after `docker-compose up`.
+
 ### Running the Project
 
-1. **Start the Services**: Run the following command to start the necessary services using Docker Compose:
+1. **Start the Services**: Run the following command to start the necessary services using Docker Compose. It can take a few minutes:
 
 `docker-compose up`
 
-2. **Run End-to-End Tests**: If you want to run end-to-end tests, execute the following command after the first step:
+2. **Run End-to-End Tests**: If you want to run end-to-end tests, execute the following command after the first step is finished:
 
 `yarn test:e2e`
 
@@ -18,6 +24,8 @@
 `yarn test`
 
 ## Endpoints
+
+URL: http://localhost:3000/
 
 ### Create Wallet
 
