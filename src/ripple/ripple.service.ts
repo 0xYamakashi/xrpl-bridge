@@ -107,14 +107,14 @@ export class RippleService {
 
   async subscribeToAllAddresses() {
     const wallets = await this.walletService.findAll();
-    let addresses = [];
+    const addresses = [];
     wallets.forEach((wallet) => addresses.push(wallet.address));
     await this.subscribeToAddresses(addresses);
   }
 
   async unsubscribeFromAllAddresses() {
     const wallets = await this.walletService.findAll();
-    let addresses = [];
+    const addresses = [];
     wallets.forEach((wallet) => addresses.push(wallet.address));
     await this.unsubscribeFromAddress(addresses);
   }
