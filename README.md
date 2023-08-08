@@ -1,4 +1,4 @@
-# Wallets API
+# xrpl-bridge API
 
 ## Getting Started
 
@@ -6,16 +6,16 @@
 
 1. **Start the Services**: Run the following command to start the necessary services using Docker Compose:
 
-docker-compose up
+`docker-compose up`
 
 2. **Run End-to-End Tests**: If you want to run end-to-end tests, execute the following command after the first step:
 
-yarn test:e2e
+`yarn test:e2e`
 
 3. **Run Unit and Integration Tests**: To run unit and integration tests, run the following commands:
 
-yarn
-yarn test
+`yarn`\
+`yarn test`
 
 ## Endpoints
 
@@ -65,3 +65,18 @@ yarn test
 
 - **URL**: `/wallets/address/:address`
 - **Method**: `DELETE
+
+## DTO (Data Transfer Object)
+
+### WalletDto
+
+Used for creating and updating wallets.
+
+```typescript
+import { IsNotEmpty, IsString } from 'class-validator';
+
+export class WalletDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly address: string;
+}
