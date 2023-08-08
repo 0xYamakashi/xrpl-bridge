@@ -16,6 +16,7 @@ export const walletModelMock = {
     exec: jest.fn().mockResolvedValue([testWallet]),
   }),
   findById: jest.fn().mockReturnValue({
+    populate: jest.fn().mockReturnThis(),
     exec: jest.fn().mockResolvedValue(testWallet),
   }),
   findByIdAndUpdate: jest.fn().mockReturnValue({
