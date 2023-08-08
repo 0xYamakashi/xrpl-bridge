@@ -24,13 +24,33 @@ export class RippleService {
     this.ws = new WebSocket(this.getApiUrl());
 
     this.ws.on('open', () => {
-      console.log('open');
       this.subscribeToAllAddresses();
     });
 
-    this.ws.on('close', () => {
-      console.log('close');
-      this.unsubscribeFromAllAddresses();
+    this.ws.on('message', async (data) => {
+      try {
+        const transactionData = JSON.parse(data.toString());
+        if (transactionData.engine_result === 'tesSUCCESS') {
+          const txn = new this.transactionModel(transactionData.transaction);
+          await txn.save();
+
+          const wallets = await this.walletModel.find({
+            $or: [
+              { address: transactionData.transaction.Account },
+              { address: transactionData.transaction.Destination },
+            ],
+          });
+          wallets.forEach(async (wallet) => {
+            if (wallet.transactions.some((tx) => tx.hash === txn.hash)) {
+              return;
+            }
+            wallet.transactions.push(txn._id);
+            await wallet.save();
+          });
+        }
+      } catch (e) {
+        console.log('Error on parsing tx', e);
+      }
     });
   }
 
@@ -38,6 +58,7 @@ export class RippleService {
     return this.configService.get<string>('XRPL_API_WS_URL');
   }
 
+  //not used anywhere but you could use it also save all past transactions for walllet
   async getAddressTransactions(address: string): Promise<any> {
     try {
       const response = await axios.post(this.getApiUrl(), {
@@ -70,37 +91,6 @@ export class RippleService {
       accounts: addresses,
     };
     this.ws.send(JSON.stringify(message));
-    this.ws.on('message', async (data) => {
-      try {
-        const transactionData = JSON.parse(data.toString());
-        if (transactionData.engine_result === 'tesSUCCESS') {
-          const txn = new this.transactionModel(transactionData.transaction);
-          await txn.save();
-
-          const wallets = await this.walletModel.find({
-            $or: [
-              { address: transactionData.transaction.Account },
-              { address: transactionData.transaction.Destination },
-            ],
-          });
-
-          wallets.forEach(async (wallet) => {
-            if (wallet.transactions.some((tx) => tx.hash === txn.hash)) {
-              console.log('DUPLICATED');
-              return;
-            }
-            wallet.transactions.push(txn._id);
-            await wallet.save();
-            console.log(
-              `Transaction ${transactionData.transaction.hash} 
-               saved for wallet ${wallet.address}`,
-            );
-          });
-        }
-      } catch (e) {
-        console.log('Error on parsing tx', e);
-      }
-    });
   }
 
   async unsubscribeFromAddress(addresses: string[]) {
