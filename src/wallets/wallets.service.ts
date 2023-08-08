@@ -38,11 +38,17 @@ export class WalletsService {
   }
 
   async findOne(id: string): Promise<Wallet> {
-    return await this.walletModel.findById(id).exec();
+    return await this.walletModel
+      .findById(id)
+      .populate('transactions', '', this.transactionModel)
+      .exec();
   }
 
   async findByAddress(address: string): Promise<Wallet> {
-    return await this.walletModel.findOne({ address: address }).exec();
+    return await this.walletModel
+      .findOne({ address: address })
+      .populate('transactions', '', this.transactionModel)
+      .exec();
   }
 
   async update(id: string, wallet: WalletDto): Promise<Wallet> {
